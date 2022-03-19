@@ -5,5 +5,8 @@ from app import db
 
 def index():
   q = User.query.all()
-  res = [x.serialize for x in q]
-  return jsonify(res)
+  return jsonify(q)
+
+def get_user_by_id(user_id):
+  q = User.query.filter_by(id=2).first()
+  return jsonify(q)
