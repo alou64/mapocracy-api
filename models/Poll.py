@@ -1,6 +1,8 @@
 from app import db
 from datetime import datetime
+from dataclasses import dataclass
 
+@dataclass
 class Poll(db.Model):
   __tablename__ = 'poll'
   __table_args__ = {'schema': 'public'}

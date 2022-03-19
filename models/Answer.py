@@ -1,5 +1,7 @@
 from app import db
+from dataclasses import dataclass
 
+@dataclass
 class Answer(db.Model):
   __tablename__ = 'answer'
   __table_args__ = {'schema': 'public'}
