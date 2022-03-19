@@ -3,4 +3,4 @@ from controllers.PollController import index
 
 poll_bp = Blueprint('poll_bp', __name__)
 
-poll.route('/', methods=['GET'])(index)
+poll_bp.route('/', methods=['GET'])(index)

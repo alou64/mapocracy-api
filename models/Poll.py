@@ -1,12 +1,12 @@
 from app import db
-from Category import Category
 
 class Poll(db.Model):
   __tablename__ = 'poll'
   __table_args__ = {'schema': 'public'}
 
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+  category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
   name = db.Column(db.String, nullable=False)
   center = db.Column(db.String)
   restriction = db.Column(db.String)
@@ -15,3 +15,6 @@ class Poll(db.Model):
   start_at = db.Column(db.DateTime, nullable=False)
   end_at = db.Column(db.DateTime, nullable=False)
   visibility = db.Column(db.Numeric)
+
+  # list of answers for poll
+  answers = db.relationship('Answer')

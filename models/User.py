@@ -21,6 +21,9 @@ class User(db.Model):
   marital_status = db.Column(db.String)
   veteran = db.Column(db.Boolean)
 
+  # list of polls for user
+  polls = db.relationship('Poll')
+
   @property
   def serialize(self):
     return {
