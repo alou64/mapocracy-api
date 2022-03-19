@@ -10,3 +10,6 @@ def index():
 def get_user_by_id(user_id):
   q = User.query.filter_by(id=user_id).first()
   return jsonify(q)
+
+def create_user():
+  pass
