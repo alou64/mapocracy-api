@@ -1,6 +1,6 @@
 from flask import Blueprint
 from controllers.CategoryController import index
 
-category_bp = Blueprint('vote_bp', __name__)
+category_bp = Blueprint('category_bp', __name__)
 
-category.route('/', methods=['GET'])(index)
+category_bp.route('/', methods=['GET'])(index)
