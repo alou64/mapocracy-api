@@ -5,8 +5,8 @@ class Poll(db.Model):
   __table_args__ = {'schema': 'public'}
 
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-  category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
+  category_id = db.Column(db.Integer, db.ForeignKey('public.category.id'), nullable=False)
   name = db.Column(db.String, nullable=False)
   center = db.Column(db.String)
   restriction = db.Column(db.String)
