@@ -1,5 +1,7 @@
 from app import db
+from dataclasses import dataclass
 
+@dataclass
 class User(db.Model):
   __tablename__ = 'user'
   __table_args__ = {'schema': 'public'}
@@ -30,11 +32,11 @@ class User(db.Model):
     self.email = email
     self.auth0id = auth0id
 
-  @property
-  def serialize(self):
-    return {
-      'id': self.id,
-      'first_name': self.first_name,
-      'last_name': self.last_name,
-      'email': self.email
-    }
+  # @property
+  # def serialize(self):
+  #   return {
+  #     'id': self.id,
+  #     'first_name': self.first_name,
+  #     'last_name': self.last_name,
+  #     'email': self.email
+  #   }

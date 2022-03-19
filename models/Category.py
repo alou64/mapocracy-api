@@ -1,9 +1,13 @@
 from app import db
-from flask import jsonify
+from dataclasses import dataclass
 
+@dataclass
 class Category(db.Model):
   __tablename__ = 'category'
   __table_args__ = {'schema': 'public'}
+
+  id: int
+  name: str
 
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String, nullable=False)

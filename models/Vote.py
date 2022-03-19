@@ -1,6 +1,8 @@
 from app import db
+from dataclasses import dataclass
 
 # many to many association object
+@dataclass
 class Vote(db.Model):
   __tablename__ = 'vote'
   __table_args__ = {'schema': 'public'}
