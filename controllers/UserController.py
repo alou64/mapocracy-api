@@ -8,5 +8,5 @@ def index():
   return jsonify(q)
 
 def get_user_by_id(user_id):
-  q = User.query.filter_by(id=2).first()
+  q = User.query.filter_by(id=user_id).first()
   return jsonify(q)
