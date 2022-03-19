@@ -10,7 +10,6 @@ class User(db.Model):
   first_name: str
   last_name: str
   email: str
-  auth0_id: str
   longtitude: float
   latitude: float
   age: int
@@ -24,10 +23,9 @@ class User(db.Model):
   veteran: bool
 
   id = db.Column(db.Integer, primary_key=True)
-  first_name = db.Column(db.String, nullable=False)
-  last_name = db.Column(db.String, nullable=False)
+  first_name = db.Column(db.String)
+  last_name = db.Column(db.String)
   email = db.Column(db.String, nullable=False, unique=True)
-  auth0_id = db.Column(db.String, nullable=False, unique=True)
   longtitude = db.Column(db.Numeric)
   latitude = db.Column(db.Numeric)
   age = db.Column(db.Integer)
@@ -43,11 +41,8 @@ class User(db.Model):
   # list of polls for user
   polls = db.relationship('Poll', cascade='all, delete')
 
-  def __init__(self, first_name, last_name, email, auth0_id):
-    self.first_name = first_name
-    self.last_name = last_name
+  def __init__(self, email):
     self.email = email
-    self.auth0_id = auth0_id
 
   # @property
   # def serialize(self):
