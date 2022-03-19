@@ -5,7 +5,7 @@ class Answer(db.Model):
   __table_args__ = {'schema': 'public'}
 
   id = db.Column(db.Integer, primary_key=True)
-  poll_id = db.Column(db.Integer, db.ForeignKey('poll.id'), nullable=False)
+  poll_id = db.Column(db.Integer, db.ForeignKey('public.poll.id'), nullable=False)
   content = db.Column(db.Text)
 
   # list of votes for answer

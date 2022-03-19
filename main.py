@@ -7,6 +7,7 @@ from routes.poll_bp import poll_bp
 from routes.user_bp import user_bp
 from routes.vote_bp import vote_bp
 
+db.init_app(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(answer_bp, url_prefix='/answer')
