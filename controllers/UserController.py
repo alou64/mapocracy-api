@@ -12,4 +12,5 @@ def get_user_by_id(user_id):
   return jsonify(q)
 
 def create_user():
-  pass
+  content = request.json
+  return content
