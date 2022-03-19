@@ -22,7 +22,13 @@ class User(db.Model):
   veteran = db.Column(db.Boolean)
 
   # list of polls for user
-  polls = db.relationship('Poll')
+  polls = db.relationship('Poll', cascade='all, delete')
+
+  def __init__(self, first_name, last_name, email, auth0id):
+    self.first_name = first_name
+    self.last_name = last_name
+    self.email = email
+    self.auth0id = auth0id
 
   @property
   def serialize(self):

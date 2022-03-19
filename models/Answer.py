@@ -9,4 +9,8 @@ class Answer(db.Model):
   content = db.Column(db.Text)
 
   # list of votes for answer
-  votes = db.relationship('Vote')
+  votes = db.relationship('Vote', cascade='all, delete')
+
+  def __init__(self, poll_id, content):
+    self.poll_id = poll_id
+    self.content = content

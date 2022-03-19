@@ -1,4 +1,5 @@
 from app import db
+from flask import jsonify
 
 class Category(db.Model):
   __tablename__ = 'category'
@@ -8,4 +9,7 @@ class Category(db.Model):
   name = db.Column(db.String, nullable=False)
 
   # list of votes for answer
-  polls = db.relationship('Poll')
+  polls = db.relationship('Poll', cascade='all, delete')
+
+  def __init__(self, name):
+    self.name = name
