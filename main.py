@@ -16,5 +16,9 @@ app.register_blueprint(poll_bp, url_prefix='/poll')
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(vote_bp, url_prefix='/vote')
 
+@app.route('/', methods=['GET'])
+def index():
+  return {'test': 'test'}
+
 if __name__ == '__main__':
   app.run()
