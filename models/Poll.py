@@ -7,6 +7,15 @@ class Poll(db.Model):
   __tablename__ = 'poll'
   __table_args__ = {'schema': 'public'}
 
+  id: int
+  user_id: int
+  category_id: int
+  name: str
+  description: str
+  created_at: datetime
+  start_at: datetime
+  end_at: datetime
+
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
   category_id = db.Column(db.Integer, db.ForeignKey('public.category.id'), nullable=False)

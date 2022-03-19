@@ -6,6 +6,10 @@ class Answer(db.Model):
   __tablename__ = 'answer'
   __table_args__ = {'schema': 'public'}
 
+  id: int
+  poll_id: str
+  content: str
+
   id = db.Column(db.Integer, primary_key=True)
   poll_id = db.Column(db.Integer, db.ForeignKey('public.poll.id'), nullable=False)
   content = db.Column(db.Text)

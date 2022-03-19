@@ -6,6 +6,23 @@ class User(db.Model):
   __tablename__ = 'user'
   __table_args__ = {'schema': 'public'}
 
+  id: int
+  first_name: str
+  last_name: str
+  email: str
+  auth0_id: str
+  longtitude: float
+  latitude: float
+  age: int
+  gender: str
+  ethnicity: str
+  industry: str
+  religion: str
+  income_range: str
+  education: str
+  marital_status: str
+  veteran: bool
+
   id = db.Column(db.Integer, primary_key=True)
   first_name = db.Column(db.String, nullable=False)
   last_name = db.Column(db.String, nullable=False)
@@ -26,11 +43,11 @@ class User(db.Model):
   # list of polls for user
   polls = db.relationship('Poll', cascade='all, delete')
 
-  def __init__(self, first_name, last_name, email, auth0id):
+  def __init__(self, first_name, last_name, email, auth0_id):
     self.first_name = first_name
     self.last_name = last_name
     self.email = email
-    self.auth0id = auth0id
+    self.auth0_id = auth0_id
 
   # @property
   # def serialize(self):
