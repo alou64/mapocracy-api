@@ -12,5 +12,7 @@ def get_user_by_id(user_id):
   return jsonify(q)
 
 def create_user():
-  content = request.json
-  return content
+  user = User(request.json['email'])
+  db.session.add(user)
+  db.session.commit()
+  return jsonify(user)
