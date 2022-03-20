@@ -1,6 +1,6 @@
 from models.User import User
 from flask import Flask, request, jsonify, make_response
-from app import db
+from database import db
 
 
 def index():
