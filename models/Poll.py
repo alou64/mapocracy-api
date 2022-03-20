@@ -8,7 +8,7 @@ class Poll(db.Model):
   __table_args__ = {'schema': 'public'}
 
   id: int
-  user_id: int
+  user_id: str
   category_id: int
   name: str
   description: str
@@ -17,7 +17,7 @@ class Poll(db.Model):
   end_at: datetime
 
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
+  user_id = db.Column(db.String, db.ForeignKey('public.user.id'), nullable=False)
   category_id = db.Column(db.Integer, db.ForeignKey('public.category.id'), nullable=False)
   name = db.Column(db.String, nullable=False)
   # center = db.Column(db.String)

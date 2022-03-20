@@ -5,3 +5,6 @@ from database import db
 
 def index():
   pass
+
+def create_poll():
+  pass

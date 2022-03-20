@@ -7,8 +7,8 @@ def index():
   q = User.query.all()
   return jsonify(q)
 
-def get_user_by_id(user_id):
-  q = User.query.filter_by(id=user_id).first()
+def get_user_by_email(email):
+  q = User.query.filter_by(id=email).first()
   return jsonify(q)
 
 def create_user():
@@ -16,3 +16,6 @@ def create_user():
   db.session.add(user)
   db.session.commit()
   return jsonify(user)
+
+def user_poll():
+  pass
