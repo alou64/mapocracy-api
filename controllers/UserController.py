@@ -16,6 +16,3 @@ def create_user():
   db.session.add(user)
   db.session.commit()
   return jsonify(user)
-
-def user_poll():
-  pass
