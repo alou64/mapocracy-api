@@ -6,7 +6,6 @@ from datetime import datetime
 
 def index():
   q = User.query.all()
-  print(q)
   return jsonify(q)
 
 def get_user_by_email(email):
@@ -22,6 +21,5 @@ def create_user():
 def get_user_poll(email):
   user = User.query.filter_by(id=email).first()
   if request.args['time'] == 'current':
-    # polls = [poll for poll in user.polls if y.end_at > datetime.now()]
     return jsonify([poll for poll in user.polls if poll.end_at > datetime.now()])
   return jsonify([poll for poll in user.polls if poll.end_at < datetime.now()])

@@ -30,5 +30,13 @@ def create_poll():
   db.session.commit()
   return jsonify(poll)
 
+def get_poll_by_id(id):
+  q = Poll.query.filter_by(id=id).first()
+  return jsonify(q)
+
+def get_poll_answers(id):
+  q = Answer.query.filter_by(poll_id=id).all()
+  return jsonify(q)
+
 
 # datetime.fromtimestamp(int('1364694508'))
