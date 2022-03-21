@@ -1,27 +1,28 @@
 from database import db
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
-@dataclass
+# @dataclass
 class User(db.Model):
   __tablename__ = 'user'
   __table_args__ = {'schema': 'public'}
 
-  id: str
-  first_name: str
-  last_name: str
-  longtitude: float
-  latitude: float
-  age: int
-  gender: str
-  ethnicity: str
-  industry: str
-  religion: str
-  income_range: str
-  education: str
-  marital_status: str
-  veteran: bool
+  # id: str
+  # first_name: str
+  # last_name: str
+  # longtitude: float
+  # latitude: float
+  # age: int
+  # gender: str
+  # ethnicity: str
+  # industry: str
+  # religion: str
+  # income_range: str
+  # education: str
+  # marital_status: str
+  # veteran: bool
 
-  id = db.Column(db.String, primary_key=True)
+  id = db.Column(db.Integer, primary_key=True)
+  email = db.Column(db.String, nullable=False)
   first_name = db.Column(db.String)
   last_name = db.Column(db.String)
   longtitude = db.Column(db.Numeric)
@@ -43,14 +44,5 @@ class User(db.Model):
     order_by='desc(Poll.id)'
   )
 
-  def __init__(self, email):
-    self.id = email
-
-  # @property
-  # def serialize(self):
-  #   return {
-  #     'id': self.id,
-  #     'first_name': self.first_name,
-  #     'last_name': self.last_name,
-  #     'email': self.email
-  #   }
+  # def __init__(self, email):
+  #   self.email = email
