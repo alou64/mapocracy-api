@@ -1,2 +1,7 @@
 test.py
 .venv
+__pycache__
+controllers/__pycache__
+migrations/__pycache__
+models/__pycache__
+routes/__pycache__
