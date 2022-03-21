@@ -6,9 +6,7 @@ from datetime import datetime
 
 
 def index():
-<<<<<<< HEAD
-  q = Poll.query.all()
-  return jsonify(q)
+  return jsonify(Poll.query.all())
 
 def create_poll():
   req = request.json
@@ -33,11 +31,6 @@ def create_poll():
 
 
 # datetime.fromtimestamp(int('1364694508'))
-||||||| 5f0f194
-  pass
-=======
-  # q = Poll.query.all()
-  return jsonify(Poll.query.all())
 
 def create_poll():
   req = request.json
@@ -72,4 +65,3 @@ def get_poll_answers(id):
 
 
 # datetime.fromtimestamp(int('1364694508'))
->>>>>>> feature/routes
