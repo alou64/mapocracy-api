@@ -6,8 +6,8 @@ from datetime import datetime
 
 
 def index():
-  q = Poll.query.all()
-  return jsonify(q)
+  # q = Poll.query.all()
+  return jsonify(Poll.query.all())
 
 def create_poll():
   req = request.json
@@ -31,12 +31,14 @@ def create_poll():
   return jsonify(poll)
 
 def get_poll_by_id(id):
-  q = Poll.query.filter_by(id=id).first()
-  return jsonify(q)
+  # q = Poll.query.filter_by(id=id).first()
+  return jsonify(Poll.query.filter_by(id=id).first())
 
 def get_poll_answers(id):
-  q = Answer.query.filter_by(poll_id=id).all()
-  return jsonify(q)
+  # q = Answer.query.filter_by(poll_id=id).all()
+  # q = Poll.query.filter_by(id=id).first().answers
+
+  return jsonify(Poll.query.filter_by(id=id).first().answers)
 
 
 # datetime.fromtimestamp(int('1364694508'))
