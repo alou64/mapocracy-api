@@ -1,11 +1,13 @@
 from models.Poll import Poll
+from models.Answer import Answer
 from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 
 
 def index():
-  pass
+  q = Poll.query.all()
+  return jsonify(q)
 
 def create_poll():
   req = request.json
@@ -21,6 +23,10 @@ def create_poll():
     req['visibility']
   )
   db.session.add(poll)
+  db.session.flush()
+  for item in req['answers']:
+    answer = Answer(poll.id, item)
+    db.session.add(answer)
   db.session.commit()
   return jsonify(poll)
 

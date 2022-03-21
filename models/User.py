@@ -37,7 +37,11 @@ class User(db.Model):
   veteran = db.Column(db.Boolean)
 
   # list of polls for user
-  polls = db.relationship('Poll', cascade='all, delete')
+  polls = db.relationship(
+    'Poll',
+    cascade='all, delete',
+    order_by='desc(Poll.id)'
+  )
 
   def __init__(self, email):
     self.id = email
