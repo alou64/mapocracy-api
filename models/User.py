@@ -21,7 +21,7 @@ class User(db.Model):
   # marital_status: str
   # veteran: bool
 
-  id = db.Column(db.String, primary_key=True)
+  id = db.Column(db.Integer, primary_key=True)
   email = db.Column(db.String, nullable=False)
   first_name = db.Column(db.String)
   last_name = db.Column(db.String)

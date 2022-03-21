@@ -16,12 +16,16 @@ setattr(BaseQuery, '_limit', _limit)
 
 
 from models.Answer import Answer
+from models.Category import Category
+from models.Poll import Poll
+from models.User import User
+from models.Vote import Vote
 
 # from routes.answer_bp import answer_bp
-from routes.category_bp import category_bp
-from routes.poll_bp import poll_bp
-from routes.user_bp import user_bp
-from routes.vote_bp import vote_bp
+# from routes.category_bp import category_bp
+# from routes.poll_bp import poll_bp
+# from routes.user_bp import user_bp
+# from routes.vote_bp import vote_bp
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -32,16 +36,20 @@ migrate = Migrate(app, db)
 
 manager = APIManager(app, flask_sqlalchemy_db=db)
 
-answer_blueprint = manager.create_api(Answer, allow_functions=True)
+answer_blueprint = manager.create_api(Answer, methods=['GET', 'POST'], allow_functions=True)
+category_blueprint = manager.create_api(Category, methods=['GET', 'POST'], allow_functions=True)
+poll_blueprint = manager.create_api(Poll, methods=['GET', 'POST'], allow_functions=True)
+user_blueprint = manager.create_api(User, methods=['GET', 'POST'], allow_functions=True)
+vote_blueprint = manager.create_api(Vote, methods=['GET', 'POST'], allow_functions=True)
 
 
 
 
 # app.register_blueprint(answer_bp, url_prefix='/answer')
-app.register_blueprint(category_bp, url_prefix='/category')
-app.register_blueprint(poll_bp, url_prefix='/poll')
-app.register_blueprint(user_bp, url_prefix='/user')
-app.register_blueprint(vote_bp, url_prefix='/vote')
+# app.register_blueprint(category_bp, url_prefix='/category')
+# app.register_blueprint(poll_bp, url_prefix='/poll')
+# app.register_blueprint(user_bp, url_prefix='/user')
+# app.register_blueprint(vote_bp, url_prefix='/vote')
 
 @app.route('/', methods=['GET'])
 def index():

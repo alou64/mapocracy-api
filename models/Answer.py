@@ -1,8 +1,8 @@
 # from flask_sqlalchemy import SQLAlchemy
 from database import db
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
-@dataclass
+# @dataclass
 class Answer(db.Model):
   __tablename__ = 'answer'
   __table_args__ = {'schema': 'public'}
