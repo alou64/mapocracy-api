@@ -1,28 +1,27 @@
 from database import db
-# from dataclasses import dataclass
+from dataclasses import dataclass
 
-# @dataclass
+@dataclass
 class User(db.Model):
   __tablename__ = 'user'
   __table_args__ = {'schema': 'public'}
 
-  # id: str
-  # first_name: str
-  # last_name: str
-  # longtitude: float
-  # latitude: float
-  # age: int
-  # gender: str
-  # ethnicity: str
-  # industry: str
-  # religion: str
-  # income_range: str
-  # education: str
-  # marital_status: str
-  # veteran: bool
+  id: str
+  first_name: str
+  last_name: str
+  longtitude: float
+  latitude: float
+  age: int
+  gender: str
+  ethnicity: str
+  industry: str
+  religion: str
+  income_range: str
+  education: str
+  marital_status: str
+  veteran: bool
 
-  id = db.Column(db.Integer, primary_key=True)
-  email = db.Column(db.String, nullable=False)
+  id = db.Column(db.String, primary_key=True)
   first_name = db.Column(db.String)
   last_name = db.Column(db.String)
   longtitude = db.Column(db.Numeric)
@@ -43,6 +42,12 @@ class User(db.Model):
     cascade='all, delete',
     order_by='desc(Poll.id)'
   )
+  # list of votes for user
+  votes = db.relationship('Vote', cascade='all, delete')
+  # list of email lists owned by user
+  voter_lists = db.relationship('VoterList', cascade='all, delete')
+  # list of email lists user is member of
+  voter_list_membership = db.relationship('VoterListMember', cascade='all, delete')
 
-  # def __init__(self, email):
-  #   self.email = email
+  def __init__(self, email):
+    self.id = email

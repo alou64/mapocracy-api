@@ -4,8 +4,7 @@ from database import db
 
 
 def index():
-  q = Answer.query.all()
-  return jsonify(q)
+  return jsonify(Answer.query.all())
 
 
 def create_answer():

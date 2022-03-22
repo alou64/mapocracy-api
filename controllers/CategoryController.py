@@ -9,8 +9,8 @@ def index():
   q = Category.query.all()
   return jsonify(q)
 
-# def index():
-#   session = Session()
-#   q = session.query(Category).all()
-#   res = [json.dumps(x) for x in q]
-#   return jsonify(res)
+def create_category():
+  category = Category(request.json['name'])
+  db.session.add(category)
+  db.session.commit()
+  return jsonify(category)
