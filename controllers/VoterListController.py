@@ -10,4 +10,15 @@ def index():
 
 def create_voter_list():
   req = request.json
-  return
+  voter_list = VoterList(req['user_id'], req['name'])
+
+  db.session.add(voter_list)
+  db.session.flush()
+
+  for email in req['emails']:
+    voter_list_member = VoterListMember(voter_list.id, email)
+    db.session.add(voter_list_member)
+
+  db.session.commit()
+
+  return jsonify(voter_list, voter_list.voter_list_members)

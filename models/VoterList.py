@@ -8,9 +8,11 @@ class VoterList(db.Model):
 
   id: int
   user_id: str
+  name: str
 
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.String, db.ForeignKey('public.user.id', ondelete='CASCADE'), nullable=False)
+  name = db.Column(db.String, nullable=False)
 
   # list of members of email list
   voter_list_members = db.relationship('VoterListMember', cascade='all, delete')
@@ -18,5 +20,6 @@ class VoterList(db.Model):
   polls = db.relationship('Poll', cascade='all, delete')
 
 
-  def __init__(self, user_id):
+  def __init__(self, user_id, name):
     self.user_id = user_id
+    self.name = name
