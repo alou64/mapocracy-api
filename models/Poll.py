@@ -40,7 +40,7 @@ class Poll(db.Model):
     self.category_id = int(category_id)
     self.name = name
     self.center = center
-    self.restriction = None if not restriction else int(restriction)
+    self.restriction = None if not restriction else restriction
     self.description = description
     self.created_at = datetime.now()
     self.start_at = datetime.strptime(start_at, '%Y-%m-%d')
