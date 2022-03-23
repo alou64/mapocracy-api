@@ -73,19 +73,8 @@ def update_user():
   req = request.json
   user = User.query.get(req['id'])
 
-  user.first_name = req['first_name']
-  user.last_name = req['last_name']
-  user.longtitude = req['longtitude']
-  user.latitude = req['latitude']
-  user.age = req['age']
-  user.gender = req['gender']
-  user.ethnicity = req['ethnicity']
-  user.industry = req['industry']
-  user.religion = req['religion']
-  user.income_range = req['income_range']
-  user.education = req['education']
-  user.marital_status = req['marital_status']
-  user.veteran = req['veteran']
+  for key, val in req.items():
+    user.key = val
 
   db.session.commit()
 
