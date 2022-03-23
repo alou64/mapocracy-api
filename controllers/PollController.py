@@ -59,7 +59,8 @@ def filter_polls():
   elif request.args['filter'] == 'past':
     return jsonify(
       Poll.query
-        .filter(Poll.end_at < datetime.now(), Poll.restriction == None)
+        .filter(Poll.end_at < datetime.now())
+        .filter(Poll.restriction == None)
         .order_by(Poll.end_at.desc())
         .all()
       )
