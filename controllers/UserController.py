@@ -31,20 +31,38 @@ def create_user():
 
 def get_user_poll(email):
   if request.args['time'] == 'current':
-    return jsonify(Poll.query.filter(Poll.user_id == email, Poll.end_at >= datetime.now()).all())
+    return jsonify(
+      Poll.query
+        .filter(Poll.user_id == email, Poll.end_at >= datetime.now())
+        .all()
+    )
 
-  return jsonify(Poll.query.filter(Poll.user_id == email, Poll.end_at < datetime.now()).all())
+  return jsonify(
+    Poll.query
+    .filter(Poll.user_id == email, Poll.end_at < datetime.now())
+    .all()
+  )
 
 
 def get_user_invites(email):
-  invites = Poll.query\
-    .join(VoterList, Poll.restriction == VoterList.id)\
-    .join(VoterListMember, VoterList.id == VoterListMember.voter_list_id)\
-    .filter(VoterListMember.user_id == email)\
-    .all()
-
-  return jsonify(invites)
+  return jsonify(
+    Poll.query
+      .join(VoterList, Poll.restriction == VoterList.id)
+      .join(VoterListMember, VoterList.id == VoterListMember.voter_list_id)
+      .filter(VoterListMember.user_id == email)
+      .all()
+  )
 
 
 def get_user_voter_list(email):
-  return jsonify({VoterList.id: [VoterListMember.user_id for VoterListMember in VoterList.voter_list_members] for VoterList in VoterList.query.filter(VoterList.user_id == email).all()})
+  return jsonify(
+    {
+      VoterList.id:
+        [
+          VoterListMember.user_id for VoterListMember in VoterList.voter_list_members
+            ]
+              for VoterList in VoterList.query
+                .filter(VoterList.user_id == email)
+                .all()
+      }
+  )
