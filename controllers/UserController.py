@@ -16,7 +16,12 @@ def get_user_by_email(email):
 
 
 def create_user():
-  user = User(request.json['email'])
+  email = request.json['email']
+
+  if User.query.get(email):
+    return make_response('User already exists', 400)
+
+  user = User(email)
 
   db.session.add(user)
   db.session.commit()
