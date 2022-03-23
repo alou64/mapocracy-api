@@ -1,13 +1,15 @@
 from models.Poll import Poll
 from models.Answer import Answer
+from models.Vote import Vote
 from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 
-def index():
-  return jsonify(Poll.query.all())
+# def index():
+#   return jsonify(Poll.query.all())
 
 
 def create_poll():
@@ -38,10 +40,44 @@ def create_poll():
 
 
 def get_poll_by_id(id):
-  q = Poll.query.filter_by(id=id).first()
+  q = Poll.query.get(id)
   return jsonify(q, q.answers)
 
 
-def get_poll_answers(id):
-  q = Answer.query.filter_by(poll_id=id).all()
-  return jsonify(q)
+def filter_polls():
+  if request.args['filter'] == 'current':
+    return jsonify(
+      Poll.query
+        .filter(Poll.end_at >= datetime.now(), Poll.start_at <= datetime.now(), Poll.restriction == None)
+        .order_by(Poll.start_at.desc())
+        .all()
+    )
+
+  elif request.args['filter'] == 'past':
+    return jsonify(
+      Poll.query
+        .filter(Poll.end_at < datetime.now(), Poll.restriction == None)
+        .order_by(Poll.end_at.desc())
+        .all()
+      )
+
+  elif request.args['filter'] == 'date':
+    return jsonify(
+      Poll.query
+        .filter(Poll.restriction == None)
+        .order_by(Poll.created_at.desc())
+        .all()
+      )
+
+  elif request.args['filter'] == 'popularity':
+    subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
+    return jsonify(
+      Poll.query
+        .join(subquery, Poll.id == subquery.c.poll_id)
+        # .add_column(subquery.c.popularity)
+        .filter(Poll.restriction == None)
+        .order_by(subquery.c.popularity.desc())
+        .all()
+    )
+
+  return jsonify(Poll.query.filter(Poll.restriction == None).all())
