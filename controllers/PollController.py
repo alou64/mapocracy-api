@@ -45,6 +45,9 @@ def get_poll_by_id(id):
 
 
 def filter_polls():
+  if not request.args:
+    return jsonify(Poll.query.filter(Poll.restriction == None).all())
+
   if request.args['filter'] == 'current':
     return jsonify(
       Poll.query
@@ -69,15 +72,13 @@ def filter_polls():
         .all()
       )
 
-  elif request.args['filter'] == 'popularity':
-    subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
-    return jsonify(
-      Poll.query
-        .join(subquery, Poll.id == subquery.c.poll_id)
-        # .add_column(subquery.c.popularity)
-        .filter(Poll.restriction == None)
-        .order_by(subquery.c.popularity.desc())
-        .all()
-    )
 
-  return jsonify(Poll.query.filter(Poll.restriction == None).all())
+  subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
+  return jsonify(
+    Poll.query
+      .join(subquery, Poll.id == subquery.c.poll_id)
+      # .add_column(subquery.c.popularity)
+      .filter(Poll.restriction == None)
+      .order_by(subquery.c.popularity.desc())
+      .all()
+  )
