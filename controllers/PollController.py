@@ -72,6 +72,7 @@ def filter_polls():
         .all()
       )
 
+
   subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
   return jsonify(
     Poll.query
