@@ -81,7 +81,7 @@ def update_user():
   user = User.query.get(req['id'])
 
   for key, val in req.items():
-    user.key = val
+    setattr(user, key, val)
 
   db.session.commit()
 
