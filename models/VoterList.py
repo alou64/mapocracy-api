@@ -17,7 +17,7 @@ class VoterList(db.Model):
   # list of members of email list
   voter_list_members = db.relationship('VoterListMember', cascade='all, delete')
   # list of polls for email list
-  polls = db.relationship('Poll', cascade='all, delete')
+  voter_list_polls = db.relationship('VoterListPoll', cascade='all, delete')
 
 
   def __init__(self, user_id, name):

@@ -9,7 +9,7 @@ class User(db.Model):
   id: str
   first_name: str
   last_name: str
-  longtitude: float
+  longitude: float
   latitude: float
   age: int
   gender: str
@@ -24,7 +24,7 @@ class User(db.Model):
   id = db.Column(db.String, primary_key=True)
   first_name = db.Column(db.String)
   last_name = db.Column(db.String)
-  longtitude = db.Column(db.Numeric)
+  longitude = db.Column(db.Numeric)
   latitude = db.Column(db.Numeric)
   age = db.Column(db.Integer)
   gender = db.Column(db.String)

@@ -1,15 +1,43 @@
 from models.Poll import Poll
+from models.User import User
 from models.Answer import Answer
 from models.Vote import Vote
+from models.VoterListPoll import VoterListPoll
 from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
 
 
 # def index():
 #   return jsonify(Poll.query.all())
+
+
+def answer_vote_count_coords(answers):
+  return {'answers': [{'id': answer.id, 'poll_id': answer.poll_id, 'content': answer.content, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count(), 'coordinates': [[user.latitude, user.longitude] for user in User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()]} for answer in answers]}
+  # return [{'answer': answer, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count()} for answer in answers]
+
+
+# def answer_coords(answers):
+#   res = []
+#   for answer in answers:
+#     users = User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()
+#     # users = User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()
+#     # print(users)
+#     for user in users:
+#       res.append({answer.id: [user.latitude, user.longitude]})
+#     # res.append([user.latitude, user.longitude for user in users])
+#   print(res)
+#   return res
+
+
+
+
+def test():
+  poll = Poll.query.get(1)
+  # poo = answer_vote_count(poll.answers)
+  poo = answer_vote_count_coords(poll.answers)
+  return jsonify(poo)
 
 
 def create_poll():
@@ -20,10 +48,13 @@ def create_poll():
     req['category'],
     req['name'],
     req['region'],
-    req['restriction'],
+    True if req['emaillist'] else False,
     req['description'],
     req['start_at'],
     req['end_at'],
+    req['center'][1],
+    req['center'][0],
+    req['radius'],
     req['visibility']
   )
 
@@ -34,18 +65,22 @@ def create_poll():
     answer = Answer(poll.id, item)
     db.session.add(answer)
 
+  for item in req['emaillist']:
+    voter_list_poll = VoterListPoll(item, poll.id)
+    db.session.add(voter_list_poll)
+
   db.session.commit()
 
   return jsonify(poll, poll.answers)
 
 
 def get_poll_by_id(id):
-  q = Poll.query.get(id)
-  return jsonify(q, q.answers)
+  poll = Poll.query.get(id)
+  return jsonify(poll, answer_vote_count_coords(poll.answers))
 
 
 def filter_polls():
-  q = Poll.query.filter(Poll.restriction == None)
+  q = Poll.query.filter(Poll.restriction == False)
 
   if request.args.get('time'):
     if request.args['time'] == 'current':
@@ -68,52 +103,4 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
-  return jsonify([[poll, poll.answers] for poll in q.all()])
-
-
-
-
-
-
-
-
-
-# def filter_polls():
-#   if not request.args:
-#     return jsonify(Poll.query.filter(Poll.restriction == None).all())
-#
-#   if request.args['filter'] == 'current':
-#     return jsonify(
-#       Poll.query
-#         .filter(Poll.end_at >= datetime.now(), Poll.start_at <= datetime.now(), Poll.restriction == None)
-#         .order_by(Poll.start_at.desc())
-#         .all()
-#     )
-#
-#   elif request.args['filter'] == 'past':
-#     return jsonify(
-#       Poll.query
-#         .filter(Poll.end_at < datetime.now())
-#         .filter(Poll.restriction == None)
-#         .order_by(Poll.end_at.desc())
-#         .all()
-#       )
-#
-#   elif request.args['filter'] == 'date':
-#     return jsonify(
-#       Poll.query
-#         .filter(Poll.restriction == None)
-#         .order_by(Poll.created_at.desc())
-#         .all()
-#       )
-#
-#
-#   subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
-#   return jsonify(
-#     Poll.query
-#       .join(subquery, Poll.id == subquery.c.poll_id)
-#       # .add_column(subquery.c.popularity)
-#       .filter(Poll.restriction == None)
-#       .order_by(subquery.c.popularity.desc())
-#       .all()
-#   )
+  return jsonify([[poll, answer_vote_count_coords(poll.answers)] for poll in q.all()])
