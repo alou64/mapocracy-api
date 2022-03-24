@@ -47,9 +47,6 @@ def get_poll_by_id(id):
 def filter_polls():
   q = Poll.query.filter(Poll.restriction == None)
 
-  if not request.args:
-    return jsonify(q.all())
-
   if request.args.get('time'):
     if request.args['time'] == 'current':
       q = q.filter(Poll.end_at >= datetime.now(), Poll.start_at <= datetime.now())
@@ -71,35 +68,8 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
-  return jsonify(q.all())
-# def filter_polls():
-#   q = Poll.query.filter(Poll.restriction == None)
-#
-#   if not request.args:
-#     return jsonify(q.all())
-#
-#   if request.args['time']:
-#     if request.args['time'] == 'current':
-#       q = q.filter(Poll.end_at >= datetime.now(), Poll.start_at <= datetime.now())
-#     else: # past
-#       q = q.filter(Poll.end_at < datetime.now())
-#
-#   if request.args['region']:
-#     q = q.filter(Poll.region == request.args['region'])
-#
-#   if request.args['category']:
-#     q = q.filter(Poll.category == request.args['category'])
-#
-#   if request.args['order']:
-#     if request.args['order'] == 'popularity':
-#       subquery = db.session.query(Vote).with_entities(Vote.poll_id, func.count().label('popularity')).group_by(Vote.poll_id).subquery()
-#       q = q.join(subquery, Poll.id == subquery.c.poll_id).order_by(subquery.c.popularity.desc())
-#     elif request.args['order'] == 'new':
-#       q = q.order_by(Poll.created_at.desc())
-#     else: #old
-#       q = q.order_by(Poll.created_at.asc())
-#
-#   return jsonify(q.all())
+  return jsonify([[poll, poll.answers] for poll in q.all()])
+
 
 
 
