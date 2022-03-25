@@ -14,7 +14,7 @@ from sqlalchemy.orm import joinedload
 
 
 def answer_vote_count_coords(answers):
-  return {'answers': [{'id': answer.id, 'poll_id': answer.poll_id, 'content': answer.content, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count(), 'coordinates': [[user.latitude, user.longitude] for user in User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()]} for answer in answers]}
+  return [{'id': answer.id, 'poll_id': answer.poll_id, 'content': answer.content, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count(), 'coordinates': [[user.latitude, user.longitude] for user in User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()]} for answer in answers]
 
 
 def test():
@@ -55,21 +55,26 @@ def create_poll():
 
   db.session.commit()
 
-  return jsonify(poll, poll.answers)
+  user = User.query.get(req['user_id'])
+  poll_dict = poll.as_dict()
+  poll_dict['first_name'] = user.first_name
+  poll_dict['last_name'] = user.last_name
+  poll_dict['answers'] = answer_vote_count_coords(poll.answers)
+
+  return jsonify(poll_dict)
 
 
 def get_poll_by_id(id):
   poll = Poll.query.get(id)
   user = User.query.get(poll.user_id)
-  return jsonify(
-    poll,
-    {
-      'first_name': user.first_name,
-      'last_name': user.last_name,
-      'user_id': user.id
-    },
-    answer_vote_count_coords(poll.answers)
-  )
+
+
+  poll_dict = poll.as_dict()
+  poll_dict['first_name'] = user.first_name
+  poll_dict['last_name'] = user.last_name
+  poll_dict['answers'] = answer_vote_count_coords(poll.answers)
+
+  return jsonify(poll_dict)
 
 
 def filter_polls():
@@ -96,21 +101,41 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
-  return jsonify(
-    [
-      [
-        poll,
-        {
-          'first_name': user.first_name,
-          'last_name': user.last_name,
-          'user_id': user.id
-        },
-        answer_vote_count_coords(poll.answers)
-      ]
-      for poll in q.limit(10).all()
-        for user in
-        [
-          User.query.get(poll.user_id)
-        ]
-    ]
-  )
+      
+  res = []
+
+  for poll in q.limit(10).all():
+    user = User.query.get(poll.user_id)
+    poll_dict = poll.as_dict()
+    poll_dict['first_name'] = user.first_name
+    poll_dict['last_name'] = user.last_name
+    poll_dict['answers'] = answer_vote_count_coords(poll.answers)
+    res.append(poll_dict)
+
+  return jsonify(res)
+
+
+
+
+
+
+
+  # return jsonify(
+  #   [
+  #     [
+  #       poll,
+  #       {
+  #         'first_name': user.first_name,
+  #         'last_name': user.last_name,
+  #         'user_id': user.id
+  #       },
+  #       answer_vote_count_coords(poll.answers)
+  #     ]
+  #     for poll in q.limit(10).all()
+  #       for user in
+  #       [
+  #         User.query.get(poll.user_id)
+  #       ]
+  #   ]
+  # )
+
