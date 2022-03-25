@@ -68,6 +68,7 @@ def get_poll_by_id(id):
   poll = Poll.query.get(id)
   user = User.query.get(poll.user_id)
 
+
   poll_dict = poll.as_dict()
   poll_dict['first_name'] = user.first_name
   poll_dict['last_name'] = user.last_name
@@ -100,6 +101,7 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
+      
   res = []
 
   for poll in q.limit(10).all():
@@ -136,3 +138,4 @@ def filter_polls():
   #       ]
   #   ]
   # )
+
