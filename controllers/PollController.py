@@ -60,7 +60,16 @@ def create_poll():
 
 def get_poll_by_id(id):
   poll = Poll.query.get(id)
-  return jsonify(poll, answer_vote_count_coords(poll.answers))
+  user = User.query.get(poll.user_id)
+  return jsonify(
+    poll,
+    {
+      'first_name': user.first_name,
+      'last_name': user.last_name,
+      'user_id': user.id
+    },
+    answer_vote_count_coords(poll.answers)
+  )
 
 
 def filter_polls():
@@ -87,4 +96,21 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
-  return jsonify([[poll, answer_vote_count_coords(poll.answers)] for poll in q.all()])
+  return jsonify(
+    [
+      [
+        poll,
+        {
+          'first_name': user.first_name,
+          'last_name': user.last_name,
+          'user_id': user.id
+        },
+        answer_vote_count_coords(poll.answers)
+      ]
+      for poll in q.limit(10).all()
+        for user in
+        [
+          User.query.get(poll.user_id)
+        ]
+    ]
+  )
