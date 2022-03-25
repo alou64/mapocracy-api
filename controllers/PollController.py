@@ -15,27 +15,10 @@ from sqlalchemy.orm import joinedload
 
 def answer_vote_count_coords(answers):
   return {'answers': [{'id': answer.id, 'poll_id': answer.poll_id, 'content': answer.content, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count(), 'coordinates': [[user.latitude, user.longitude] for user in User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()]} for answer in answers]}
-  # return [{'answer': answer, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count()} for answer in answers]
-
-
-# def answer_coords(answers):
-#   res = []
-#   for answer in answers:
-#     users = User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()
-#     # users = User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()
-#     # print(users)
-#     for user in users:
-#       res.append({answer.id: [user.latitude, user.longitude]})
-#     # res.append([user.latitude, user.longitude for user in users])
-#   print(res)
-#   return res
-
-
 
 
 def test():
   poll = Poll.query.get(1)
-  # poo = answer_vote_count(poll.answers)
   poo = answer_vote_count_coords(poll.answers)
   return jsonify(poo)
 
@@ -65,9 +48,10 @@ def create_poll():
     answer = Answer(poll.id, item)
     db.session.add(answer)
 
-  for item in req['emaillist']:
-    voter_list_poll = VoterListPoll(item, poll.id)
-    db.session.add(voter_list_poll)
+  if req['emaillist']:
+    for item in req['emaillist']:
+      voter_list_poll = VoterListPoll(item, poll.id)
+      db.session.add(voter_list_poll)
 
   db.session.commit()
 
