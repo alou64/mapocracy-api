@@ -13,7 +13,15 @@ def index():
 
 
 def get_user_by_email(user_id):
-  return jsonify(User.query.get_or_404(user_id))
+  user = User.query.get(user_id)
+
+  if not user:
+    user = User(user_id)
+    db.session.add(user)
+    db.session.commit()
+
+  return jsonify(user)
+
 
 
 def create_user():
