@@ -19,6 +19,8 @@ LATITUDE_MAX = 43.689
 LATITUDE_MIN = 43.663
 POLL_RADIUS_MAX = 200
 POLL_RADIUS_MIN = 100
+REGION = 'North America'
+REGION_NAME = REGION.replace(' ', '').lower()
 
 def get_random_date(start, end, input_format, output_format):
     format = '%Y-%m-%d'
@@ -34,7 +36,7 @@ def load_sample_values(filename):
 
 def load_polls(filename):
   df = pd.read_csv(filename, delimiter=',')
-  return df.groupby('Poll').apply(lambda s: s[['Answer', 'VoteWeight']].to_dict(orient='records')).to_dict()
+  return df.groupby(['Poll', 'Category', 'Description']).apply(lambda s: s[['Answer', 'VoteWeight']].to_dict(orient='records')).to_dict()
 
 
 def create_user(email):
@@ -55,14 +57,14 @@ def create_user(email):
 
   return user
 
-def create_poll(email, name):
+def create_poll(email, name, category, description):
   poll = Poll(
     email,
-    random.choice(sample_values['Categories']),
+    category,
     name,
-    random.choice(sample_values['Regions']),
+    REGION,
     False,
-    None,
+    description,
     get_random_date('2020-01-01','2021-01-01','%Y-%m-%d', '%Y-%m-%d'),
     get_random_date('2021-01-02','2022-01-01','%Y-%m-%d', '%Y-%m-%d'),
     random.uniform(LONGITUDE_MIN, LONGITUDE_MAX),
@@ -76,34 +78,36 @@ def create_poll(email, name):
 
 #load sample values for each property from csv file
 sample_values = load_sample_values('dbsamplevalues.csv')
+polls = load_polls('polls2.csv')
 with app.app_context():
-  db.drop_all()
-  db.create_all()
+  # db.drop_all()
+  # db.create_all()
 
   # create voters who will only vote on answers
   for v in range(0, 100):
-    user = create_user(f'voter{v}@email.com')
+    user = create_user(f'voter_{REGION_NAME}_{v}@email.com')
     db.session.add(user)
     db.session.commit()
 
-  for i in range(0, 100):
+  poll_count = 0
+  for poll, answers in polls.items():
     # create user and poll owned by the user
-    user = create_user(f'owner{i}@email.com')
-    poll = create_poll(f'owner{i}@email.com', f'name{i}')
+    user = create_user(f'owner_{REGION_NAME}_{i}@email.com')
+    poll = create_poll(f'owner_{REGION_NAME}_{i}@email.com', poll[0], poll[1], poll[2])
 
-    # 50% chance to have a non-expired poll
-    if(random.random() < 0.5):
+    # 75% chance to have a non-expired poll
+    if(random.random() < 0.75):
       poll.end_at = get_random_date('2023-01-01','2024-01-01','%Y-%m-%d', '%Y-%m-%d')
 
     db.session.add(poll)
     db.session.add(user)
     db.session.flush()
 
-    # create answers in range of 2-4 per poll
-    num_of_answers = random.randint(2,4)
+
+    # create answers
     answer_ids = []
-    for j in range (0, num_of_answers):
-      answer = Answer(poll.id, f'answer {j}')
+    for answer_item in answers:
+      answer = Answer(poll.id, answer_item['Answer'])
       db.session.add(answer)
       db.session.flush()
       answer_ids.append(answer.id)
@@ -116,10 +120,13 @@ with app.app_context():
     # generate a list of answer_ids to vote on with a random length
     answer_ids_to_vote_on = random.choices(answer_ids, weights=weighting, k=random.randint(50,100))
 
+    # generate a list of answer_ids to vote on with a random length
+    answer_ids_to_vote_on = random.choices(answer_ids, weights=weighting, k=random.randint(50,100))
+
     # vote with random number of voters with a random weighting
     voter_num = 0
     for answer_id in answer_ids_to_vote_on:
-      vote = Vote(f'voter{voter_num}@email.com', poll.id, answer_id)
+      vote = Vote(f'voter_{REGION_NAME}_{voter_num}@email.com', poll.id, answer_id)
       voter_num+=1
       db.session.add(vote)
 
