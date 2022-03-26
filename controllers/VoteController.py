@@ -8,9 +8,10 @@ from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 from geopy.distance import geodesic
+from auth0_decorators import *
 
 
-
+@requires_auth
 def index():
   if request.method == 'POST':
     req = request.json
