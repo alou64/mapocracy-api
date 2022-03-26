@@ -24,8 +24,8 @@ def index():
         return make_response('User not authorized to vote in this poll', 403)
 
     # check location
-    if geodesic((user.latitude, user.longitude), (poll.latitude, poll.longitude)).km > poll.radius:
-      return('Cannot vote in this location', 403)
+    # if geodesic((user.latitude, user.longitude), (poll.latitude, poll.longitude)).km > poll.radius:
+    #   return('Cannot vote in this location', 403)
 
     # check if user already voted
     if not Vote.query.filter_by(user_id=user.id, poll_id=poll.id).first():
