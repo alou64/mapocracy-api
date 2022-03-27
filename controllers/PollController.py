@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 
 # def index():
