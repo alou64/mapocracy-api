@@ -49,8 +49,8 @@ def create_poll():
     answer = Answer(poll.id, item)
     db.session.add(answer)
 
-  if req['emaillist']:
-    for item in req['emaillist']:
+  if req['emailList']:
+    for item in req['emailList']:
       voter_list_poll = VoterListPoll(item, poll.id)
       db.session.add(voter_list_poll)
 
