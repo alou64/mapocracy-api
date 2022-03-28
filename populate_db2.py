@@ -13,10 +13,10 @@ import pandas as pd
 
 AGE_MAX = 100
 AGE_MIN = 18
-LONGITUDE_MAX = -79.523
-LONGITUDE_MIN = -79.638
-LATITUDE_MAX = 43.689
-LATITUDE_MIN = 43.663
+LONGITUDE_MAX = -79.391
+LONGITUDE_MIN = -79.449
+LATITUDE_MAX = 43.797
+LATITUDE_MIN = 43.951
 POLL_RADIUS_MAX = 200
 POLL_RADIUS_MIN = 100
 REGION = 'North America'
@@ -36,7 +36,7 @@ def load_sample_values(filename):
 
 def load_polls(filename):
   df = pd.read_csv(filename, delimiter=',')
-  return df.groupby(['Poll', 'Category', 'Description']).apply(lambda s: s[['Answer', 'VoteWeight']].to_dict(orient='records')).to_dict()
+  return df.groupby(['Poll', 'Category', 'Description']).apply(lambda s: s[['Answer']].to_dict(orient='records')).to_dict()
 
 
 def create_user(email):
@@ -77,7 +77,7 @@ def create_poll(email, name, category, description):
 
 
 #load sample values for each property from csv file
-sample_values = load_sample_values('dbsamplevalues.csv')
+sample_values = load_sample_values('demographic_categories.csv')
 polls = load_polls('polls3.csv')
 with app.app_context():
   db.drop_all()
@@ -92,8 +92,10 @@ with app.app_context():
   poll_count = 0
   for poll, answers in polls.items():
     # create user and poll owned by the user
-    user = create_user(f'owner_{REGION_NAME}_{i}@email.com')
-    poll = create_poll(f'owner_{REGION_NAME}_{i}@email.com', poll[0], poll[1], poll[2])
+    user = create_user(f'owner_{REGION_NAME}_{poll_count}@email.com')
+    poll = create_poll(f'owner_{REGION_NAME}_{poll_count}@email.com', poll[0], poll[1], poll[2])
+
+    poll_count += 1
 
     # 75% chance to have a non-expired poll
     if(random.random() < 0.75):
