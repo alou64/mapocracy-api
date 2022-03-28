@@ -78,10 +78,10 @@ def create_poll(email, name, category, description):
 
 #load sample values for each property from csv file
 sample_values = load_sample_values('dbsamplevalues.csv')
-polls = load_polls('polls2.csv')
+polls = load_polls('polls3.csv')
 with app.app_context():
-  # db.drop_all()
-  # db.create_all()
+  db.drop_all()
+  db.create_all()
 
   # create voters who will only vote on answers
   for v in range(0, 100):
