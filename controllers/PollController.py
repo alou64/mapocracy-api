@@ -116,7 +116,16 @@ def filter_polls():
   return jsonify(res)
 
 
+def update_poll():
+  req = request.json
+  poll = Poll.query.get(req['id'])
 
+  for key, val in req.items():
+    setattr(poll, key, val)
+
+  db.session.commit()
+
+  return jsonify(poll)
 
 
 
