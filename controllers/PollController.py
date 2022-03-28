@@ -32,7 +32,7 @@ def create_poll():
     req['category'],
     req['name'],
     req['region'],
-    True if req['emaillist'] else False,
+    True if req['emailList'] else False,
     req['description'],
     req['start_at'],
     req['end_at'],
