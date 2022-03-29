@@ -22,19 +22,19 @@ class User(db.Model):
   veteran: bool
 
   id = db.Column(db.String, primary_key=True)
-  first_name = db.Column(db.String)
-  last_name = db.Column(db.String)
+  first_name = db.Column(db.String, default='')
+  last_name = db.Column(db.String, default='')
   longitude = db.Column(db.Numeric)
   latitude = db.Column(db.Numeric)
   age = db.Column(db.Integer)
-  gender = db.Column(db.String)
-  ethnicity = db.Column(db.String)
-  industry = db.Column(db.String)
-  religion = db.Column(db.String)
-  income_range = db.Column(db.String)
-  education = db.Column(db.String)
-  marital_status = db.Column(db.String)
-  veteran = db.Column(db.Boolean)
+  gender = db.Column(db.String, default='')
+  ethnicity = db.Column(db.String, default='')
+  industry = db.Column(db.String, default='')
+  religion = db.Column(db.String, default='')
+  income_range = db.Column(db.String, default='')
+  education = db.Column(db.String, default='')
+  marital_status = db.Column(db.String, default='')
+  veteran = db.Column(db.Boolean, default=False)
 
   # list of polls for user
   polls = db.relationship(
