@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 
 # def index():
@@ -31,7 +32,7 @@ def create_poll():
     req['category'],
     req['name'],
     req['region'],
-    True if req['emaillist'] else False,
+    True if req['emailList'] else False,
     req['description'],
     req['start_at'],
     req['end_at'],
@@ -48,8 +49,8 @@ def create_poll():
     answer = Answer(poll.id, item)
     db.session.add(answer)
 
-  if req['emaillist']:
-    for item in req['emaillist']:
+  if req['emailList']:
+    for item in req['emailList']:
       voter_list_poll = VoterListPoll(item, poll.id)
       db.session.add(voter_list_poll)
 
@@ -101,10 +102,10 @@ def filter_polls():
     else: #old
       q = q.order_by(Poll.created_at.asc())
 
-      
+
   res = []
 
-  for poll in q.limit(10).all():
+  for poll in q.limit(9).all():
     user = User.query.get(poll.user_id)
     poll_dict = poll.as_dict()
     poll_dict['first_name'] = user.first_name
@@ -138,4 +139,3 @@ def filter_polls():
   #       ]
   #   ]
   # )
-

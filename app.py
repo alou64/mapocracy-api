@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.url_map.strict_slashes = False
 
-cors = CORS(app, origins='http://localhost:3000')
+cors = CORS(app)
 
 db.init_app(app)
 migrate = Migrate(app, db)
