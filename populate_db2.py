@@ -18,7 +18,7 @@ LONGITUDE_MIN = -79.449
 LATITUDE_MAX = 43.797
 LATITUDE_MIN = 43.951
 POLL_RADIUS_MAX = 200
-POLL_RADIUS_MIN = 100
+POLL_RADIUS_MIN = 150
 REGION = 'North America'
 REGION_NAME = REGION.replace(' ', '').lower()
 
@@ -119,8 +119,6 @@ with app.app_context():
     for j in answer_ids:
       weighting.append(random.random())
 
-    # generate a list of answer_ids to vote on with a random length
-    answer_ids_to_vote_on = random.choices(answer_ids, weights=weighting, k=random.randint(50,100))
 
     # generate a list of answer_ids to vote on with a random length
     answer_ids_to_vote_on = random.choices(answer_ids, weights=weighting, k=random.randint(50,100))

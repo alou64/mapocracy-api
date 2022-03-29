@@ -1,11 +1,20 @@
 from models.User import User
 from models.VoterList import VoterList
 from models.VoterListMember import VoterListMember
+from models.VoterListPoll import VoterListPoll
 from models.Poll import Poll
+from models.Vote import Vote
+from models.Answer import Answer
 from flask import Flask, request, jsonify, make_response
 from database import db
 from datetime import datetime
 import json
+
+
+
+def answer_vote_count_coords(answers):
+  return [{'id': answer.id, 'poll_id': answer.poll_id, 'content': answer.content, 'vote_count': Vote.query.filter(Vote.answer_id == answer.id).count(), 'coordinates': [[user.latitude, user.longitude] for user in User.query.with_entities(User.latitude, User.longitude).join(Vote, User.id == Vote.user_id).join(Answer, Vote.answer_id == Answer.id).filter(Vote.answer_id == answer.id).all()]} for answer in answers]
+
 
 
 def index():
@@ -39,38 +48,46 @@ def create_user():
 
 
 def get_user_poll(user_id):
-  if not request.args:
-    return jsonify([
-      [poll, poll.answers]
-        for poll in Poll.query
-          .all()
-    ])
+  q = Poll.query.filter(Poll.user_id == user_id)
 
-  if request.args['time'] == 'current':
-    return jsonify([
-      [poll, poll.answers]
-        for poll in Poll.query
-          .filter(Poll.user_id == user_id, Poll.end_at >= datetime.now())
-          .all()
-    ])
+  if request.args.get('time') == 'current':
+    q = q.filter(Poll.user_id == user_id, Poll.end_at >= datetime.now())
 
-  return jsonify([
-    [poll, poll.answers]
-      for poll in Poll.query
-        .filter(Poll.user_id == user_id, Poll.end_at < datetime.now())
-        .all()
-  ])
+  if request.args.get('time') == 'past':
+    q = q.filter(Poll.user_id == user_id, Poll.end_at < datetime.now())
+
+  res = []
+
+  for poll in q.all():
+    user = User.query.get(user_id)
+    poll_dict = poll.as_dict()
+    poll_dict['first_name'] = user.first_name
+    poll_dict['last_name'] = user.last_name
+    poll_dict['answers'] = answer_vote_count_coords(poll.answers)
+    res.append(poll_dict)
+
+  return jsonify(res)
 
 
 def get_user_invites(user_id):
-  return jsonify([
-    [poll, poll.answers]
-      for poll in Poll.query
-        .join(VoterList, Poll.restriction == VoterList.id)
-        .join(VoterListMember, VoterList.id == VoterListMember.voter_list_id)
-        .filter(VoterListMember.user_id == user_id)
-        .all()
-  ])
+  polls = (Poll.query
+    .join(VoterListPoll, Poll.id == VoterListPoll.poll_id)
+    .join(VoterList, VoterListPoll.voter_list_id == VoterList.id)
+    .join(VoterListMember, VoterList.id == VoterListMember.voter_list_id)
+    .filter(VoterListMember.user_id == user_id)
+    .all())
+
+  res = []
+
+  for poll in polls:
+    user = User.query.get(user_id)
+    poll_dict = poll.as_dict()
+    poll_dict['first_name'] = user.first_name
+    poll_dict['last_name'] = user.last_name
+    poll_dict['answers'] = answer_vote_count_coords(poll.answers)
+    res.append(poll_dict)
+
+  return jsonify(res)
 
 
 def get_user_voter_list(user_id):
