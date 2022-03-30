@@ -8,3 +8,4 @@ routes/__pycache__
 models/Test.py
 .env
 test2.txt
+populate_db3.py

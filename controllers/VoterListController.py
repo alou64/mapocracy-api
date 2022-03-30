@@ -1,6 +1,6 @@
 from models.VoterList import VoterList
 from models.VoterListMember import VoterListMember
-from flask import Flask, request, jsonify, make_response
+from flask import request
 from database import db
 
 
