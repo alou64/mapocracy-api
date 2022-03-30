@@ -1,5 +1,4 @@
 from flask import Blueprint
-# from controllers.UserController import index, get_user_by_email, create_user, get_user_poll, get_user_invites, get_user_voter_list, update_user
 from controllers.UserController import *
 
 user_bp = Blueprint('user_bp', __name__)

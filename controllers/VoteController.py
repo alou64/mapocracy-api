@@ -4,7 +4,8 @@ from models.Poll import Poll
 from models.VoterList import VoterList
 from models.VoterListPoll import VoterListPoll
 from models.VoterListMember import VoterListMember
-from flask import Flask, request, jsonify, make_response
+from models.Answer import Answer
+from flask import request, jsonify, make_response
 from database import db
 from datetime import datetime
 from geopy.distance import geodesic
@@ -12,14 +13,29 @@ from geopy.distance import geodesic
 
 
 def index():
-  if request.method == 'POST':
-    req = request.json
-    poll = Poll.query.get(req['poll_id'])
-    user = User.query.get(req['user_id'])
+  if request.method == 'GET':
+    # return all votes
+    return jsonify(Vote.query.all())
 
+  req = request.json
+  poll = Poll.query.get(req['poll_id'])
+  vote = Vote.query.filter_by(user_id=req['user_id'], poll_id=poll.id)
+
+  # validate answer id
+  if Answer.query.get(req['answer_id']).poll_id != poll.id:
+    return make_response('Invalid answer_id', 400)
+
+  if request.method == 'POST':
+    user = User.query.get(req['user_id'])
     # check voter list
     if poll.restriction:
-      q = VoterListMember.query.join(VoterList, VoterListMember.voter_list_id == VoterList.id).join(VoterListPoll, VoterList.id == VoterListPoll.voter_list_id).filter(VoterListPoll.poll_id == poll.id, VoterListMember.user_id == user.id).all()
+      q = (
+        VoterListMember.query
+          .join(VoterList, VoterListMember.voter_list_id == VoterList.id)
+          .join(VoterListPoll, VoterList.id == VoterListPoll.voter_list_id)
+          .filter(VoterListPoll.poll_id == poll.id, VoterListMember.user_id == user.id)
+          .all()
+      )
       if not q:
         return make_response('User not authorized to vote in this poll', 403)
 
@@ -27,8 +43,9 @@ def index():
     # if geodesic((user.latitude, user.longitude), (poll.latitude, poll.longitude)).km > poll.radius:
     #   return('Cannot vote in this location', 403)
 
-    # check if user already voted
-    if not Vote.query.filter_by(user_id=user.id, poll_id=poll.id).first():
+    # create vote if user has not voted
+    vote = vote.first()
+    if not vote:
       vote = Vote(user.id, poll.id, req['answer_id'])
       db.session.add(vote)
       db.session.commit()
@@ -36,11 +53,21 @@ def index():
 
     return make_response('Cannot vote twice', 403)
 
-  return jsonify(Vote.query.all())
+  # check if vote exists
+  if not vote.first():
+    return make_response('Vote does not exist', 400)
 
+  # update vote
+  if request.method == 'PUT':
+    vote = vote.first()
+    for key, val in req.items():
+      setattr(vote, key, val)
 
-def delete_vote(user_id, poll_id):
-  Vote.query.filter(Vote.user_id == user_id, Vote.poll_id == poll_id).delete()
+    db.session.commit()
+    return jsonify(vote)
+
+  # delete vote
+  vote.delete()
   db.session.commit()
 
   return make_response('Success', 200)
