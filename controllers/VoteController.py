@@ -18,12 +18,18 @@ def index():
     return jsonify(Vote.query.all())
 
   req = request.json
-  poll = Poll.query.get(req['poll_id'])
-  vote = Vote.query.filter_by(user_id=req['user_id'], poll_id=poll.id)
 
-  # validate answer id
-  if Answer.query.get(req['answer_id']).poll_id != poll.id:
+  # validate poll
+  poll = Poll.query.get(req['poll_id'])
+  if not poll:
+    return make_response('Invalid poll_id', 400)
+
+  # validate answer
+  answer = Answer.query.get(req['answer_id'])
+  if not answer or answer.poll_id != poll.id:
     return make_response('Invalid answer_id', 400)
+
+  vote = Vote.query.filter_by(user_id=req['user_id'], poll_id=poll.id)
 
   if request.method == 'POST':
     user = User.query.get(req['user_id'])

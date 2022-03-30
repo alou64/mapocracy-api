@@ -1,6 +1,7 @@
 from models.Poll import Poll
 from models.Answer import Answer
 from models.VoterListPoll import VoterListPoll
+from models.Vote import Vote
 from helpers.helpers import poll_as_dict
 from flask import request, jsonify
 from database import db
