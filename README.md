@@ -2,7 +2,7 @@
 
 ### Description
 
-Mapocracy is an application that allows users to create and vote on polls in their geographic area and represent their votes on a map. Mapocracy API serives as the back-end for Mapocracy. It was created with Python, Flask, SQLAlchemy, and PostgreSQL.
+Mapocracy is an application that allows users to create and vote on polls in their geographic area and represent their votes on a map. Mapocracy API serves as the back-end for Mapocracy. It was created with Python, Flask, SQLAlchemy, and PostgreSQL.
 
 ### Front-end Repository
 
