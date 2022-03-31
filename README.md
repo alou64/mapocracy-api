@@ -45,14 +45,15 @@ touch .env
 ```
 
 5. Copy the contents of `.env.sample` and change the database user and password
-6. Run the app:
 
-```
-flask run
-```
-
-7. Populate the database with random sample values:
+6. Populate the database with random sample values:
 
 ```
 python3 tools/populate_db.py
+```
+
+7. Run the app:
+
+```
+flask run
 ```
