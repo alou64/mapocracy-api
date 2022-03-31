@@ -1,3 +1,6 @@
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from database import db
 from app import app
 from models.User import User
@@ -73,9 +76,6 @@ def populate_database_with_coordinates(LATITUDE_MIN, LATITUDE_MAX, LONGITUDE_MIN
   REGION_NAME = REGION.replace(' ', '').lower()
 
   with app.app_context():
-    # db.drop_all()
-    # db.create_all()
-
     # create voters who will only vote on answers
     for v in range(0, 100):
       user = create_user(f'voter_{REGION_NAME}_{v}@email.com', LATITUDE_MIN, LATITUDE_MAX, LONGITUDE_MIN, LONGITUDE_MAX)
@@ -92,13 +92,11 @@ def populate_database_with_coordinates(LATITUDE_MIN, LATITUDE_MAX, LONGITUDE_MIN
 
       # 75% chance to have a non-expired poll
       if(random.random() < 0.75):
-        poll.end_at = get_random_date('2023-01-01','2024-01-01','%# from sqlalchemy import create_engine
-# from sqlalchemy.orm import sessionmakerY-%m-%d', '%Y-%m-%d')
+        poll.end_at = get_random_date('2023-01-01','2024-01-01','%Y-%m-%d', '%Y-%m-%d')
 
       db.session.add(poll)
       db.session.add(user)
       db.session.flush()
-
 
       # create answers
       answer_ids = []
@@ -113,7 +111,6 @@ def populate_database_with_coordinates(LATITUDE_MIN, LATITUDE_MAX, LONGITUDE_MIN
       for j in answer_ids:
         weighting.append(random.random())
 
-
       # generate a list of answer_ids to vote on with a random length
       answer_ids_to_vote_on = random.choices(answer_ids, weights=weighting, k=random.randint(50,100))
 
@@ -126,25 +123,30 @@ def populate_database_with_coordinates(LATITUDE_MIN, LATITUDE_MAX, LONGITUDE_MIN
 
     db.session.commit()
 
+# drop tables if exist
+# create all tables
+with app.app_context():
+  db.drop_all()
+  db.create_all()
 
 # load sample values for each property from csv file
-sample_values = load_sample_values('demographic_categories.csv')
-polls = load_polls('polls.csv')
+sample_values = load_sample_values('tools/dbsamplevalues.csv')
+polls = load_polls('tools/polls.csv')
 
-#Sydney
-#populate_database_with_coordinates(-33.918015, -33.757231, 150.956441, 151.248958, 'Oceania')
+# Sydney
+populate_database_with_coordinates(-33.918015, -33.757231, 150.956441, 151.248958, 'Oceania')
 
 # London
-# populate_database_with_coordinates(51.380099, 51.575968, -0.276916, 0.046813, 'Europe')
+populate_database_with_coordinates(51.380099, 51.575968, -0.276916, 0.046813, 'Europe')
 
 # Nairobi
-# populate_database_with_coordinates(-1.336352, -1.235159, 36.732246, 36.901376, 'Africa')
+populate_database_with_coordinates(-1.336352, -1.235159, 36.732246, 36.901376, 'Africa')
 
 # Sao Paolo
-# populate_database_with_coordinates(-23.633941, -23.448576, -46.754080, -46.497701, 'South America')
+populate_database_with_coordinates(-23.633941, -23.448576, -46.754080, -46.497701, 'South America')
 
 # Singapore
-# populate_database_with_coordinates(1.309941, 1.412909, 103.76105, 103.897682, 'Asia')
+populate_database_with_coordinates(1.309941, 1.412909, 103.76105, 103.897682, 'Asia')
 
 # Toronto
-# populate_database_with_coordinates(43.755408, 43.914581, -79.688323, -79.189666, 'North America')
+populate_database_with_coordinates(43.755408, 43.914581, -79.688323, -79.189666, 'North America')
